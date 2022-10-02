@@ -22,7 +22,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return tbl0.shape[0]
 
 
 def pregunta_02():
@@ -33,7 +33,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return tbl0.shape[1]
 
 
 def pregunta_03():
@@ -218,3 +218,7 @@ def pregunta_13():
     Name: _c5b, dtype: int64
     """
     return
+
+if __name__ == "__main__":
+    print(pregunta_01())
+    print(pregunta_02())
