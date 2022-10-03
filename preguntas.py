@@ -189,9 +189,16 @@ def pregunta_10():
     list2 = list(tbl0._c2)
     dict = {}
     for i in range(tbl0.shape[0]):
-        dict[list1[i]] = dict.get(list1[i], []).append(list2[i])
+        dict[list1[i]] = dict.get(list1[i], []) + [str(list2[i])]
 
-    return dict
+    finalList = sorted([[key, ":".join(sorted(dict[key]))] for key in dict])
+    finalList = np.array(finalList).T
+    return pd.DataFrame(
+            {
+                "_c0":finalList[0],
+                "_c1":finalList[1],
+            }
+    ).set_index("_c0")
 
 
 def pregunta_11():
