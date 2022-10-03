@@ -7,7 +7,8 @@ Este archivo contiene las preguntas que se van a realizar en el laboratorio.
 Utilice los archivos `tbl0.tsv`, `tbl1.tsv` y `tbl2.tsv`, para resolver las preguntas.
 
 """
-from numpy import dtype
+from operator import index
+import numpy as np
 import pandas as pd
 
 tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
@@ -51,7 +52,7 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return tbl0._c1.value_counts().sort_index().sort_index()
+    return tbl0._c1.value_counts().sort_index()
 
 
 def pregunta_04():
@@ -83,7 +84,7 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].max()
 
 
 def pregunta_06():
@@ -95,7 +96,9 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    lista = [letter.upper() for letter in set(tbl1._c4)]
+    lista.sort()
+    return lista
 
 
 def pregunta_07():
@@ -111,7 +114,7 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].sum()
 
 
 def pregunta_08():
@@ -129,7 +132,16 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    return pd.concat(
+        [ 
+            tbl0,
+
+            pd.DataFrame({
+                    "suma":(np.array(tbl0._c0) + np.array(tbl0._c2)),
+                }),
+        ],
+        axis=1,
+    )
 
 
 def pregunta_09():
@@ -147,7 +159,16 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    return pd.concat(
+        [ 
+            tbl0,
+
+            pd.DataFrame({
+                    "year":[year.split("-")[0] for year in list(tbl0._c3)]
+                }),
+        ],
+        axis=1,
+    )
 
 
 def pregunta_10():
@@ -164,7 +185,13 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    list1 = list(tbl0._c1)
+    list2 = list(tbl0._c2)
+    dict = {}
+    for i in range(tbl0.shape[0]):
+        dict[list1[i]] = dict.get(list1[i], []).append(list2[i])
+
+    return dict
 
 
 def pregunta_11():
@@ -226,3 +253,9 @@ if __name__ == "__main__":
     print(pregunta_02(), end="\n--------------------------------------------------------------------------------------\n")
     print(pregunta_03(), end="\n--------------------------------------------------------------------------------------\n")
     print(pregunta_04(), end="\n--------------------------------------------------------------------------------------\n")
+    print(pregunta_05(), end="\n--------------------------------------------------------------------------------------\n")
+    print(pregunta_06(), end="\n--------------------------------------------------------------------------------------\n")
+    print(pregunta_07(), end="\n--------------------------------------------------------------------------------------\n")
+    print(pregunta_08(), end="\n--------------------------------------------------------------------------------------\n")
+    print(pregunta_09(), end="\n--------------------------------------------------------------------------------------\n")
+    print(pregunta_10(), end="\n--------------------------------------------------------------------------------------\n")
