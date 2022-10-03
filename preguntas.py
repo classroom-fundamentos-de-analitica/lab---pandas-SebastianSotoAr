@@ -194,11 +194,11 @@ def pregunta_10():
     finalList = sorted([[key, ":".join(sorted(dict[key]))] for key in dict])
     finalList = np.array(finalList).T
     data = pd.DataFrame(
-            {
-                "_c0":finalList[0],
-                "_c1":finalList[1],
-            }
-    )
+        {
+            "_c1":finalList[0],
+            "_c2":finalList[1],
+        }
+    ).set_index("_c1")
     return data
 
 
