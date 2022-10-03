@@ -198,7 +198,7 @@ def pregunta_10():
                 "_c0":finalList[0],
                 "_c1":finalList[1],
             }
-    ).set_index("_c0")
+    )
 
 
 def pregunta_11():
