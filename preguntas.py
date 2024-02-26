@@ -7,6 +7,8 @@ Este archivo contiene las preguntas que se van a realizar en el laboratorio.
 Utilice los archivos `tbl0.tsv`, `tbl1.tsv` y `tbl2.tsv`, para resolver las preguntas.
 
 """
+from operator import index
+import numpy as np
 import pandas as pd
 
 tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
@@ -22,7 +24,7 @@ def pregunta_01():
     40
 
     """
-    return
+    return tbl0.shape[0]
 
 
 def pregunta_02():
@@ -33,7 +35,7 @@ def pregunta_02():
     4
 
     """
-    return
+    return tbl0.shape[1]
 
 
 def pregunta_03():
@@ -50,7 +52,7 @@ def pregunta_03():
     Name: _c1, dtype: int64
 
     """
-    return
+    return tbl0._c1.value_counts().sort_index()
 
 
 def pregunta_04():
@@ -65,7 +67,7 @@ def pregunta_04():
     E    4.785714
     Name: _c2, dtype: float64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].mean().sort_index()
 
 
 def pregunta_05():
@@ -82,7 +84,7 @@ def pregunta_05():
     E    9
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].max()
 
 
 def pregunta_06():
@@ -94,7 +96,9 @@ def pregunta_06():
     ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
     """
-    return
+    lista = [letter.upper() for letter in set(tbl1._c4)]
+    lista.sort()
+    return lista
 
 
 def pregunta_07():
@@ -110,7 +114,7 @@ def pregunta_07():
     E    67
     Name: _c2, dtype: int64
     """
-    return
+    return tbl0.groupby("_c1")["_c2"].sum()
 
 
 def pregunta_08():
@@ -128,7 +132,16 @@ def pregunta_08():
     39   39   E    5  1998-01-26    44
 
     """
-    return
+    return pd.concat(
+        [ 
+            tbl0,
+
+            pd.DataFrame({
+                    "suma":(np.array(tbl0._c0) + np.array(tbl0._c2)),
+                }),
+        ],
+        axis=1,
+    )
 
 
 def pregunta_09():
@@ -146,7 +159,16 @@ def pregunta_09():
     39   39   E    5  1998-01-26  1998
 
     """
-    return
+    return pd.concat(
+        [ 
+            tbl0,
+
+            pd.DataFrame({
+                    "year":[year.split("-")[0] for year in list(tbl0._c3)]
+                }),
+        ],
+        axis=1,
+    )
 
 
 def pregunta_10():
@@ -163,7 +185,21 @@ def pregunta_10():
     3   D                  1:2:3:5:5:7
     4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    return
+    list1 = list(tbl0._c1)
+    list2 = list(tbl0._c2)
+    dict = {}
+    for i in range(tbl0.shape[0]):
+        dict[list1[i]] = dict.get(list1[i], []) + [str(list2[i])]
+
+    finalList = sorted([[key, ":".join(sorted(dict[key]))] for key in dict])
+    finalList = np.array(finalList).T
+    data = pd.DataFrame(
+        {
+            "_c1":finalList[0],
+            "_c2":finalList[1],
+        }
+    ).set_index("_c1")
+    return data
 
 
 def pregunta_11():
@@ -182,7 +218,20 @@ def pregunta_11():
     38   38      d,e
     39   39    a,d,f
     """
-    return
+    list1 = list(tbl1._c0)
+    list2 = list(tbl1._c4)
+    dict = {}
+    for i in range(tbl1.shape[0]):
+        dict[list1[i]] = dict.get(list1[i], []) + [str(list2[i])]
+
+    finalList = sorted([[key, ",".join(sorted(dict[key]))] for key in dict])
+    finalList = np.array(finalList).T
+    return pd.DataFrame(
+            {
+                "_c0":finalList[0],
+                "_c4":finalList[1],
+            }
+    )
 
 
 def pregunta_12():
@@ -200,7 +249,22 @@ def pregunta_12():
     38   38                    eee:0,fff:9,iii:2
     39   39                    ggg:3,hhh:8,jjj:5
     """
-    return
+    list1 = list(tbl2._c0)
+    list2 = list(tbl2._c5a)
+    list3 = list(tbl2._c5b)
+    dict = {}
+    for i in range(tbl2.shape[0]):
+        dict[list1[i]] = dict.get(list1[i], []) + [[str(list2[i]), str(list3[i])]]
+
+    dict = {key: [":".join(l) for l in dict[key]] for key in dict}
+    finalList = [[key, ",".join(sorted(dict[key]))] for key in dict]
+    finalList = np.array(finalList).T
+    return pd.DataFrame(
+            {
+                "_c0":finalList[0],
+                "_c5":finalList[1],
+            }
+    )
 
 
 def pregunta_13():
@@ -217,4 +281,25 @@ def pregunta_13():
     E    275
     Name: _c5b, dtype: int64
     """
-    return
+    tbl2y0 = pd.merge(
+        tbl2,
+        tbl0,
+        on="_c0"
+    )
+    return tbl2y0.groupby("_c1")["_c5b"].sum()
+
+if __name__ == "__main__":
+    print("--------------------------------------------------------------------------------------")
+    print(pregunta_01(), end="\n01--------------------------------------------------------------------------------------\n")
+    print(pregunta_02(), end="\n02--------------------------------------------------------------------------------------\n")
+    print(pregunta_03(), end="\n03--------------------------------------------------------------------------------------\n")
+    print(pregunta_04(), end="\n04--------------------------------------------------------------------------------------\n")
+    print(pregunta_05(), end="\n05--------------------------------------------------------------------------------------\n")
+    print(pregunta_06(), end="\n06--------------------------------------------------------------------------------------\n")
+    print(pregunta_07(), end="\n07--------------------------------------------------------------------------------------\n")
+    print(pregunta_08(), end="\n08--------------------------------------------------------------------------------------\n")
+    print(pregunta_09(), end="\n09--------------------------------------------------------------------------------------\n")
+    print(pregunta_10(), end="\n10--------------------------------------------------------------------------------------\n")
+    print(pregunta_11(), end="\n11--------------------------------------------------------------------------------------\n")
+    print(pregunta_12(), end="\n12--------------------------------------------------------------------------------------\n")
+    print(pregunta_13(), end="\n13--------------------------------------------------------------------------------------\n")
